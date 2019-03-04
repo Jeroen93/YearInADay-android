@@ -10,23 +10,35 @@
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="149dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clockView" />
+        app:layout_constraintTop_toBottomOf="@+id/tvPercent" />
 
     <nl.jeroen.dayclock.ClockView
         android:id="@+id/clockView"
         android:layout_width="378dp"
-        android:layout_height="393dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="119dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvPercent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:text="25.23%"
+        app:layout_constraintBottom_toTopOf="@+id/tvTime"
+        app:layout_constraintEnd_toEndOf="@+id/tvTime"
+        app:layout_constraintStart_toStartOf="@+id/tvTime"
+        app:layout_constraintTop_toBottomOf="@+id/clockView" />
 
 </android.support.constraint.ConstraintLayout>

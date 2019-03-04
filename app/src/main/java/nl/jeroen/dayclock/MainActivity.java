@@ -10,13 +10,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import nl.jeroen.dayclock.model.TimeDataContainer;
+
 public class MainActivity extends AppCompatActivity {
 
-    private static final long MsInDay = 24*60*60*1000;
+    private static final long MsInDay = 24 * 60 * 60 * 1000;
     private static final int Delay = 0;
     private static final int Period = 1000;
+    private static final String Format = "%02d:%02d:%02d:%03d";
 
     private TextView tvTime;
+    private TextView tvPercent;
+    private ClockView clockView;
 
     private Handler timerHandler = new Handler();
     private Runnable timerRunnable = new Runnable() {
@@ -28,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private static String getDurationBreakdown(long millis) {
-        if(millis < 0) {
+    private static TimeDataContainer getDurationBreakdown(long millis) {
+        if (millis < 0) {
             throw new IllegalArgumentException("Duration must be greater than zero!");
         }
 
@@ -40,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
         millis -= TimeUnit.SECONDS.toMillis(seconds);
 
-        String format = "%02d:%02d:%02d:%03d";
-        return String.format(Locale.ENGLISH, format, hours, minutes, seconds, millis);
+        return new TimeDataContainer(hours, minutes, seconds, millis);
     }
 
     @Override
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tvTime = findViewById(R.id.tvTime);
+        tvPercent = findViewById(R.id.tvPercent);
+        clockView = findViewById(R.id.clockView);
     }
 
     @Override
@@ -66,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         timerHandler.removeCallbacks(timerRunnable);
     }
 
-    private void CalculateYearTime(){
+    private void CalculateYearTime() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime firstJanCurrentYear = LocalDateTime.of(now.getYear(), 1, 1, 0, 0);
         LocalDateTime firstJanNextYear = firstJanCurrentYear.minusYears(-1);
@@ -77,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
         double percentOfYear = nsSinceYearStart / nsInYear;
         long msElapsed = (long) (percentOfYear * MsInDay);
 
-        tvTime.setText(getDurationBreakdown(msElapsed));
+
+        TimeDataContainer tdc = getDurationBreakdown(msElapsed);
+        clockView.SetTime((int) tdc.hours, (int) tdc.minutes, (int) tdc.seconds);
+        String timeString = String.format(Locale.ENGLISH, Format, tdc.hours, tdc.minutes, tdc.seconds, tdc.millis);
+        tvTime.setText(timeString);
+
+        tvPercent.setText(String.format(Locale.ENGLISH, "%.3f %%", percentOfYear * 100f));
     }
 }

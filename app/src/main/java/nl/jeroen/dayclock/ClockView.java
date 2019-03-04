@@ -15,13 +15,15 @@ import java.util.Calendar;
 // https://www.youtube.com/watch?v=ybKgq6qqTeA
 public class ClockView extends View {
 
+    private int hour, minute, second;
+
     private int height, width = 0;
     private int padding = 0;
     private int fontSize = 0;
     private int handTruncation, hourHandTruncation = 0;
     private int radius = 0;
     private Paint paint;
-    private int[] numbers = {1,2,3,4,5,6,7,8,9,10,11,12};
+    private int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
     private Rect rect = new Rect();
 
     public ClockView(Context context) {
@@ -34,6 +36,12 @@ public class ClockView extends View {
 
     public ClockView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public void SetTime(int hour, int minute, int second) {
+        this.hour = hour > 12 ? hour - 12 : hour;
+        this.minute = minute;
+        this.second = second;
     }
 
     @Override
@@ -61,7 +69,7 @@ public class ClockView extends View {
         postInvalidateDelayed(500);
     }
 
-    private void drawHand(Canvas canvas, double loc, boolean isHour){
+    private void drawHand(Canvas canvas, double loc, boolean isHour) {
         double angle = Math.PI * loc / 30 - Math.PI / 2;
         int handRadius = isHour
                 ? radius - handTruncation - hourHandTruncation
@@ -73,14 +81,11 @@ public class ClockView extends View {
     }
 
     private void drawHands(Canvas canvas) {
-        Calendar c = Calendar.getInstance();
-        float hour = c.get(Calendar.HOUR_OF_DAY);
-        hour = hour > 12 ? hour - 12 : hour;
-        float loc = (hour + c.get(Calendar.MINUTE) / 60f) * 5f;
+        float loc = (hour + minute / 60f) * 5f;
 
         drawHand(canvas, loc, true);
-        drawHand(canvas, c.get(Calendar.MINUTE), false);
-        drawHand(canvas, c.get(Calendar.SECOND), false);
+        drawHand(canvas, minute, false);
+        drawHand(canvas, second, false);
     }
 
     private void drawNumeral(Canvas canvas) {
@@ -96,12 +101,12 @@ public class ClockView extends View {
         }
     }
 
-    private void drawCenter(Canvas canvas){
+    private void drawCenter(Canvas canvas) {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(width / 2f, height / 2f, 12, paint);
     }
 
-    private void drawCircle(Canvas canvas){
+    private void drawCircle(Canvas canvas) {
         paint.reset();
         paint.setColor(ContextCompat.getColor(getContext(), android.R.color.white));
         paint.setStrokeWidth(5);
