@@ -10,8 +10,6 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import java.util.Calendar;
-
 // https://www.youtube.com/watch?v=ybKgq6qqTeA
 public class ClockView extends View {
 
