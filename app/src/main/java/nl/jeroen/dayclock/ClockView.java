@@ -21,7 +21,6 @@ public class ClockView extends View {
     private int handTruncation, hourHandTruncation = 0;
     private int radius = 0;
     private Paint paint;
-    private boolean isInit;
     private int[] numbers = {1,2,3,4,5,6,7,8,9,10,11,12};
     private Rect rect = new Rect();
 
@@ -37,9 +36,10 @@ public class ClockView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    private void initClock(){
-        height = getHeight();
-        width = getWidth();
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        height = h;
+        width = w;
         padding = 50;
         fontSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 13,
                 getResources().getDisplayMetrics());
@@ -48,20 +48,10 @@ public class ClockView extends View {
         handTruncation = min / 20;
         hourHandTruncation = min / 7;
         paint = new Paint();
-        isInit = true;
     }
-
-//    @Override
-//    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-//        super.onSizeChanged(w, h, oldw, oldh);
-//    }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (!isInit){
-            initClock();
-        }
-
         canvas.drawColor(Color.BLACK);
         drawCircle(canvas);
         drawCenter(canvas);
@@ -87,7 +77,7 @@ public class ClockView extends View {
         float hour = c.get(Calendar.HOUR_OF_DAY);
         hour = hour > 12 ? hour - 12 : hour;
         float loc = (hour + c.get(Calendar.MINUTE) / 60f) * 5f;
-        
+
         drawHand(canvas, loc, true);
         drawHand(canvas, c.get(Calendar.MINUTE), false);
         drawHand(canvas, c.get(Calendar.SECOND), false);
