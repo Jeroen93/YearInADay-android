@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DayClock</string>
+    <string name="time">Time:</string>
+    <string name="percent_elapsed">Percent elapsed</string>
 </resources>

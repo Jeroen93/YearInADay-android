@@ -55,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:text="Time:"
+        android:text="@string/time"
         android:textSize="18sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/tvTime"
         app:layout_constraintStart_toStartOf="@+id/guideline" />
@@ -79,7 +79,7 @@
         android:layout_width="113dp"
         android:layout_height="23dp"
         android:layout_marginStart="8dp"
-        android:text="Percent elapsed"
+        android:text="@string/percent_elapsed"
         android:textSize="18sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/tvPercent"
         app:layout_constraintStart_toStartOf="@+id/guideline" />
