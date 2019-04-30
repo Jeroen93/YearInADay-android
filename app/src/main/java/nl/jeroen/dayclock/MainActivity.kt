@@ -12,12 +12,16 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 import nl.jeroen.dayclock.model.TimeDataContainer
+import java.time.format.DateTimeFormatter
 
 class MainActivity : AppCompatActivity() {
 
-    private var tvTime: TextView? = null
+    private var tvTime : TextView? = null
+    private var tvTimeOfYear: TextView? = null
     private var tvPercent: TextView? = null
     private var clockView: ClockView? = null
+    private var displayedYearSecond = (-1).toLong()
+    private var formatter : DateTimeFormatter? = null
 
     private val timerHandler = Handler()
     private val timerRunnable = object : Runnable {
@@ -33,8 +37,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         tvTime = findViewById(R.id.tvTime)
+        tvTimeOfYear = findViewById(R.id.tvTimeOfYear)
         tvPercent = findViewById(R.id.tvPercent)
         clockView = findViewById(R.id.clockView)
+
+        formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
     }
 
     override fun onResume() {
@@ -51,6 +58,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun calculateYearTime() {
         val now = LocalDateTime.now()
+
+        tvTime!!.text = now.format(formatter)
+
         val firstJanCurrentYear = LocalDateTime.of(now.year, 1, 1, 0, 0)
         val firstJanNextYear = firstJanCurrentYear.minusYears(-1)
 
@@ -62,25 +72,33 @@ class MainActivity : AppCompatActivity() {
 
 
         val tdc = getDurationBreakdown(msElapsed)
-        clockView!!.SetTime(tdc.hours.toInt(), tdc.minutes.toInt(), tdc.seconds.toInt())
-        val timeString = String.format(Locale.ENGLISH, Format, tdc.hours, tdc.minutes, tdc.seconds, tdc.millis)
-        tvTime!!.text = timeString
+        val currentSecond = tdc.seconds
 
-        tvPercent!!.text = String.format(Locale.ENGLISH, "%.3f %%", percentOfYear * 100f)
+        if (displayedYearSecond != currentSecond){
+            displayedYearSecond = currentSecond
+
+            clockView!!.setTime(tdc.hours.toInt(), tdc.minutes.toInt(), currentSecond.toInt())
+        }
+
+        val timeString = String.format(Locale.ENGLISH, Format, tdc.hours, tdc.minutes, currentSecond, tdc.millis)
+        tvTimeOfYear!!.text = timeString
+
+        tvPercent!!.text = String.format(Locale.ENGLISH, "%.5f %%", percentOfYear * 100f)
     }
 
     companion object {
 
         private const val MsInDay = (24 * 60 * 60 * 1000).toLong()
         private const val Delay = 0
-        private const val Period = 1000
-        private const val Format = "%02d:%02d:%02d:%03d"
+        private const val Period = 50
+        private const val Format = "%02d:%02d:%02d:%05d"
 
-        private fun getDurationBreakdown(millis: Long): TimeDataContainer {
-            var millis = millis
-            if (millis < 0) {
+        private fun getDurationBreakdown(ms: Long): TimeDataContainer {
+            if (ms < 0) {
                 throw IllegalArgumentException("Duration must be greater than zero!")
             }
+
+            var millis = ms
 
             val hours = TimeUnit.MILLISECONDS.toHours(millis)
             millis -= TimeUnit.HOURS.toMillis(hours)
