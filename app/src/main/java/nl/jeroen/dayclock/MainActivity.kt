@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private var tvPercent: TextView? = null
     private var clockView: ClockView? = null
     private var displayedYearSecond = (-1).toLong()
-    private var formatter : DateTimeFormatter? = null
+    private var timeFormatter : DateTimeFormatter? = null
 
     private val timerHandler = Handler()
     private val timerRunnable = object : Runnable {
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         tvPercent = findViewById(R.id.tvPercent)
         clockView = findViewById(R.id.clockView)
 
-        formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
+        timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
     }
 
     override fun onResume() {
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     private fun calculateYearTime() {
         val now = LocalDateTime.now()
 
-        tvTime!!.text = now.format(formatter)
+        tvTime!!.text = now.format(timeFormatter)
 
         val firstJanCurrentYear = LocalDateTime.of(now.year, 1, 1, 0, 0)
         val firstJanNextYear = firstJanCurrentYear.minusYears(-1)
@@ -80,8 +80,8 @@ class MainActivity : AppCompatActivity() {
             clockView!!.setTime(tdc.hours.toInt(), tdc.minutes.toInt(), currentSecond.toInt())
         }
 
-        val timeString = String.format(Locale.ENGLISH, Format, tdc.hours, tdc.minutes, currentSecond, tdc.millis)
-        tvTimeOfYear!!.text = timeString
+        val timeOfYearString = String.format(Locale.ENGLISH, TOYFormat, tdc.hours, tdc.minutes, currentSecond, tdc.millis)
+        tvTimeOfYear!!.text = timeOfYearString
 
         tvPercent!!.text = String.format(Locale.ENGLISH, "%.5f %%", percentOfYear * 100f)
     }
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         private const val MsInDay = (24 * 60 * 60 * 1000).toLong()
         private const val Delay = 0
         private const val Period = 50
-        private const val Format = "%02d:%02d:%02d:%05d"
+        private const val TOYFormat = "%02d:%02d:%02d:%03d"
 
         private fun getDurationBreakdown(ms: Long): TimeDataContainer {
             if (ms < 0) {
