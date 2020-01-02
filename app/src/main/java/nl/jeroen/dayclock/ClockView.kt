@@ -109,6 +109,7 @@ class ClockView : View {
 
     private fun drawNumeral(canvas: Canvas) {
         paint!!.textSize = fontSize.toFloat()
+        paint!!.style = Paint.Style.FILL
 
         for (number in numbers) {
             val tmp = number.toString()
@@ -121,7 +122,6 @@ class ClockView : View {
     }
 
     private fun drawCenter(canvas: Canvas) {
-        paint!!.style = Paint.Style.FILL
         canvas.drawCircle(clockWidth / 2f, clockHeight / 2f, 12f, paint!!)
     }
 
