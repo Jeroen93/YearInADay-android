@@ -10,6 +10,9 @@ import android.util.TypedValue
 import android.view.View
 
 import androidx.core.content.ContextCompat
+import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.sin
 
 // https://www.youtube.com/watch?v=ybKgq6qqTeA
 class ClockView : View {
@@ -47,7 +50,7 @@ class ClockView : View {
         padding = 50
         fontSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 13f,
                 resources.displayMetrics).toInt()
-        val min = Math.min(clockHeight, clockWidth)
+        val min = min(clockHeight, clockWidth)
         radius = min / 2 - padding
         handTruncation = min / 20
         hourHandTruncation = min / 7
@@ -57,48 +60,68 @@ class ClockView : View {
     override fun onDraw(canvas: Canvas) {
         canvas.drawColor(Color.BLACK)
         drawCircle(canvas)
-        drawCenter(canvas)
         drawNumeral(canvas)
         drawHands(canvas)
+        drawCenter(canvas)
 
         postInvalidateDelayed(500)
     }
 
-    private fun drawHand(canvas: Canvas, loc: Double, isHour: Boolean) {
-        val angle = Math.PI * loc / 30 - Math.PI / 2
-        val handRadius = if (isHour)
-            radius - handTruncation - hourHandTruncation
-        else
-            radius - handTruncation
-
-        val stopX = (clockWidth / 2 + Math.cos(angle) * handRadius).toFloat()
-        val stopY = (clockHeight / 2 + Math.sin(angle) * handRadius).toFloat()
-        canvas.drawLine(clockWidth / 2f, clockHeight / 2f, stopX, stopY, paint!!)
+    private fun drawHands(canvas: Canvas) {
+        drawHourHand(canvas)
+        drawMinuteHand(canvas)
+        drawSecondHand(canvas)
     }
 
-    private fun drawHands(canvas: Canvas) {
+    private fun drawHourHand(canvas: Canvas) {
+        val handRadius = radius - handTruncation - hourHandTruncation
         val loc = (hour + minute / 60f) * 5f
+        val minutePaint = Paint(paint)
+        minutePaint.color = ContextCompat.getColor(context, R.color.colorPrimary)
+        minutePaint.strokeWidth = 15f
 
-        drawHand(canvas, loc.toDouble(), true)
-        drawHand(canvas, minute.toDouble(), false)
-        drawHand(canvas, second.toDouble(), false)
+        drawHand(canvas, loc.toDouble(), handRadius, minutePaint)
+    }
+
+    private fun drawMinuteHand(canvas: Canvas) {
+        val handRadius = radius - handTruncation
+        val secondPaint = Paint(paint)
+        secondPaint.strokeWidth = 12f
+
+        drawHand(canvas, minute.toDouble(), handRadius, secondPaint)
+    }
+
+    private fun drawSecondHand(canvas: Canvas) {
+        val handRadius = radius - handTruncation
+        val secondPaint = Paint(paint)
+        secondPaint.color = ContextCompat.getColor(context, R.color.colorAccent)
+
+        drawHand(canvas, second.toDouble(), handRadius, secondPaint)
+    }
+
+    private fun drawHand(canvas: Canvas, loc: Double, handRadius: Int, paint: Paint) {
+        val angle = Math.PI * loc / 30 - Math.PI / 2
+
+        val stopX = (clockWidth / 2 + cos(angle) * handRadius).toFloat()
+        val stopY = (clockHeight / 2 + sin(angle) * handRadius).toFloat()
+        canvas.drawLine(clockWidth / 2f, clockHeight / 2f, stopX, stopY, paint)
     }
 
     private fun drawNumeral(canvas: Canvas) {
         paint!!.textSize = fontSize.toFloat()
+        paint!!.style = Paint.Style.FILL
 
         for (number in numbers) {
             val tmp = number.toString()
             paint!!.getTextBounds(tmp, 0, tmp.length, rect)
             val angle = Math.PI / 6 * (number - 3)
-            val x = (clockWidth / 2f + Math.cos(angle) * radius - rect.width() / 2f).toInt()
-            val y = ((clockHeight / 2f).toDouble() + Math.sin(angle) * radius + (rect.height() / 2f).toDouble()).toInt()
+            val x = (clockWidth / 2f + cos(angle) * radius - rect.width() / 2f).toInt()
+            val y = ((clockHeight / 2f).toDouble() + sin(angle) * radius + (rect.height() / 2f).toDouble()).toInt()
             canvas.drawText(tmp, x.toFloat(), y.toFloat(), paint!!)
         }
     }
 
     private fun drawCenter(canvas: Canvas) {
-        paint!!.style = Paint.Style.FILL
         canvas.drawCircle(clockWidth / 2f, clockHeight / 2f, 12f, paint!!)
     }
 
