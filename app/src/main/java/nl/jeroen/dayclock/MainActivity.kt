@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         tvTime!!.text = now.format(timeFormatter)
 
         val firstJanCurrentYear = LocalDateTime.of(now.year, 1, 1, 0, 0)
-        val firstJanNextYear = firstJanCurrentYear.minusYears(-1)
+        val firstJanNextYear = firstJanCurrentYear.plusYears(1)
 
         val nsInYear = firstJanCurrentYear.until(firstJanNextYear, ChronoUnit.NANOS)
         val nsSinceYearStart = firstJanCurrentYear.until(now, ChronoUnit.NANOS).toDouble()
