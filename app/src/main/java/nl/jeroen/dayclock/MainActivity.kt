@@ -2,6 +2,7 @@ package nl.jeroen.dayclock
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.time.LocalDateTime
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private var displayedYearSecond = -1
     private var timeFormatter: DateTimeFormatter? = null
 
-    private val timerHandler = Handler()
+    private val timerHandler = Handler(Looper.getMainLooper())
     private val timerRunnable = object : Runnable {
         override fun run() {
             calculateYearTime()
